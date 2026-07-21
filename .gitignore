@@ -1,0 +1,19 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# VS Code
+.vscode/
+
+# Temp / scratch
+res.txt
+*.bak
+*copy*.py
+_*.py
+
+# Test cases
+Testcase/
