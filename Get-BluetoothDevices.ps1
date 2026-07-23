@@ -137,6 +137,7 @@ $brandNormalize = [ordered]@{
     "hp, Inc"                       = "HP"
     # Dell
     "jingxun"                      = "Dell"
+    "dell computer corp"            = "Dell"
     # Microsoft
     "microsoft"                    = "Microsoft"
     # Google
@@ -406,6 +407,13 @@ foreach ($key in $deviceMap.Keys) {
     $deviceMap[$key].Brand = $finalBrand
     $deviceMap[$key].BrandMethod = $finalMethod
 
+    # OEM override: VID resolves to ODM/chip vendor but device name reveals actual brand
+    if ($deviceMap[$key].Brand -eq 'Creative Technology, Ltd' -and $key -match '\bdell\b') {
+        $deviceMap[$key].Brand = 'Dell'
+        $deviceMap[$key].BrandMethod = 'Method OEM override (ODM=Creative->Dell)'
+        Write-Host "[DEBUG] [$key] OEM override  : Creative Technology, Ltd -> Dell"
+    }
+
     if ($hasA2DP -or $hasHFP) {
         $deviceMap[$key].AudioMode = "Classic"
     } elseif ($hasLEProxy) {
@@ -442,3 +450,5 @@ foreach ($key in $deviceMap.Keys) {
     }
     Write-Host ("{0,-32} {1,-18} {2,-20} {3}" -f $key, $category, $typeString, $brand)
 }
+
+Pause

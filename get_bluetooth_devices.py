@@ -1,5 +1,6 @@
 """
 get_bluetooth_devices.py
+Author: Ernie Wu
 Enumerates connected Bluetooth devices on Windows and resolves
 Brand + DeviceCategory for each one.
 
@@ -112,6 +113,7 @@ BRAND_NORMALIZE = [
     (r"hp inc",         "HP"),
     (r"hp, inc",        "HP"),
     (r"jingxun",        "Dell"),
+    (r"dell computer corp",  "Dell"),
     (r"microsoft",      "Microsoft"),
     (r"google",         "Google"),
     (r"qualcomm",       "Qualcomm"),
@@ -473,6 +475,13 @@ def scan_bluetooth_devices(debug: bool = True) -> list[BtDevice]:
 
         entry.brand        = final_brand
         entry.brand_method = final_method
+
+        # OEM override: VID resolves to ODM/chip vendor but device name reveals actual brand
+        if entry.brand == "Creative Technology, Ltd" and re.search(r"\bdell\b", name, re.IGNORECASE):
+            entry.brand        = "Dell"
+            entry.brand_method = "Method OEM override (ODM=Creative→Dell)"
+            if debug:
+                print(f"[DEBUG] [{name}] OEM override  : Creative Technology, Ltd -> Dell")
 
         if has_a2dp or has_hfp:
             entry.audio_mode = "Classic"
